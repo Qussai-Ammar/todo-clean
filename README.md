@@ -1,9 +1,10 @@
 # Todo Clean
 
-A todo list API built with **clean architecture** and a **feature-first** folder
+A todo list app built with **clean architecture** and a **feature-first** folder
 structure: every feature owns its full vertical slice (domain → application →
 infrastructure → presentation), and features are wired together only at the
-composition root.
+composition root. The backend is an Express/TypeScript API; `public/` is a
+small dependency-free HTML/CSS/JS frontend served by that same API.
 
 ## Features
 
@@ -131,3 +132,9 @@ npm run lint     # typecheck everything (src + tests)
 
 Set `JWT_SECRET` and `PORT` via environment variables (or a `.env` file) in
 production; a development default is used otherwise.
+
+Open `http://localhost:3000/` for the frontend (register/log in, create
+projects, add tasks, switch between kanban and list views, invite
+collaborators). It's plain HTML/CSS/JS in `public/` — no build step, no
+framework — served as static files by the same Express app that serves
+`/api/*`.

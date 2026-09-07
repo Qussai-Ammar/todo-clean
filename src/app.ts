@@ -1,4 +1,5 @@
 import cors from "cors";
+import path from "path";
 import express, { Express } from "express";
 import { buildContainer } from "./composition/container";
 import { errorHandler, notFoundHandler } from "./shared/infrastructure/http/error-handler";
@@ -9,6 +10,7 @@ export function createApp(jwtSecret: string): Express {
 
   app.use(cors());
   app.use(express.json());
+  app.use(express.static(path.join(__dirname, "..", "public")));
 
   app.get("/health", (_req, res) => res.status(200).json({ status: "ok" }));
 
