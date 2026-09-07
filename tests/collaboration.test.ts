@@ -4,9 +4,10 @@ import { buildTestApp, createProject, registerUser } from "./helpers";
 
 describe("collaboration feature", () => {
   it("lets the owner invite a collaborator by email", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const bob = await registerUser(app, { email: "bob@example.com" });
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
+    const bob = await registerUser(testApp, { email: "bob@example.com" });
     const project = await createProject(app, owner.token);
 
     const res = await request(app)
@@ -20,10 +21,11 @@ describe("collaboration feature", () => {
   });
 
   it("prevents a non-owner from inviting collaborators", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const other = await registerUser(app);
-    const bob = await registerUser(app, { email: "bob2@example.com" });
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
+    const other = await registerUser(testApp);
+    const bob = await registerUser(testApp, { email: "bob2@example.com" });
     const project = await createProject(app, owner.token);
 
     const res = await request(app)
@@ -35,9 +37,10 @@ describe("collaboration feature", () => {
   });
 
   it("gives a viewer read access but not write access", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const viewer = await registerUser(app, { email: "viewer@example.com" });
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
+    const viewer = await registerUser(testApp, { email: "viewer@example.com" });
     const project = await createProject(app, owner.token);
 
     await request(app)
@@ -58,9 +61,10 @@ describe("collaboration feature", () => {
   });
 
   it("lets the owner change a collaborator's role", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const bob = await registerUser(app, { email: "bob3@example.com" });
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
+    const bob = await registerUser(testApp, { email: "bob3@example.com" });
     const project = await createProject(app, owner.token);
 
     await request(app)
@@ -78,9 +82,10 @@ describe("collaboration feature", () => {
   });
 
   it("lets a member remove themselves from a project", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const bob = await registerUser(app, { email: "bob4@example.com" });
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
+    const bob = await registerUser(testApp, { email: "bob4@example.com" });
     const project = await createProject(app, owner.token);
 
     await request(app)

@@ -4,10 +4,10 @@ import { buildTestApp, createProject, registerUser } from "./helpers";
 
 describe("projects feature", () => {
   it("creates a project owned by the authenticated user", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
+    const testApp = buildTestApp();
+    const owner = await registerUser(testApp);
 
-    const res = await request(app)
+    const res = await request(testApp.app)
       .post("/api/projects")
       .set("Authorization", `Bearer ${owner.token}`)
       .send({ name: "Roadmap", description: "2026 roadmap" });
@@ -18,23 +18,25 @@ describe("projects feature", () => {
   });
 
   it("lists only projects the user owns or was invited to", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const stranger = await registerUser(app);
-    await createProject(app, owner.token, { name: "Private" });
+    const testApp = buildTestApp();
+    const owner = await registerUser(testApp);
+    const stranger = await registerUser(testApp);
+    await createProject(testApp.app, owner.token, { name: "Private" });
 
-    const res = await request(app).get("/api/projects").set("Authorization", `Bearer ${stranger.token}`);
+    const res = await request(testApp.app)
+      .get("/api/projects")
+      .set("Authorization", `Bearer ${stranger.token}`);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual([]);
   });
 
   it("updates a project's name", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const project = await createProject(app, owner.token, { name: "Old Name" });
+    const testApp = buildTestApp();
+    const owner = await registerUser(testApp);
+    const project = await createProject(testApp.app, owner.token, { name: "Old Name" });
 
-    const res = await request(app)
+    const res = await request(testApp.app)
       .patch(`/api/projects/${project.id}`)
       .set("Authorization", `Bearer ${owner.token}`)
       .send({ name: "New Name" });
@@ -44,12 +46,12 @@ describe("projects feature", () => {
   });
 
   it("prevents a non-collaborator from viewing a project", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const stranger = await registerUser(app);
-    const project = await createProject(app, owner.token);
+    const testApp = buildTestApp();
+    const owner = await registerUser(testApp);
+    const stranger = await registerUser(testApp);
+    const project = await createProject(testApp.app, owner.token);
 
-    const res = await request(app)
+    const res = await request(testApp.app)
       .get(`/api/projects/${project.id}`)
       .set("Authorization", `Bearer ${stranger.token}`);
 
@@ -57,17 +59,17 @@ describe("projects feature", () => {
   });
 
   it("only lets the owner delete the project", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const other = await registerUser(app);
-    const project = await createProject(app, owner.token);
+    const testApp = buildTestApp();
+    const owner = await registerUser(testApp);
+    const other = await registerUser(testApp);
+    const project = await createProject(testApp.app, owner.token);
 
-    const deniedRes = await request(app)
+    const deniedRes = await request(testApp.app)
       .delete(`/api/projects/${project.id}`)
       .set("Authorization", `Bearer ${other.token}`);
     expect(deniedRes.status).toBe(403);
 
-    const okRes = await request(app)
+    const okRes = await request(testApp.app)
       .delete(`/api/projects/${project.id}`)
       .set("Authorization", `Bearer ${owner.token}`);
     expect(okRes.status).toBe(204);

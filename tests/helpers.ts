@@ -1,23 +1,42 @@
 import request from "supertest";
 import { Express } from "express";
 import { createApp } from "../src/app";
+import { RecordingEmailSender } from "../src/features/auth";
 
-export function buildTestApp(): Express {
-  return createApp("test-secret");
+export interface TestApp {
+  app: Express;
+  emailSender: RecordingEmailSender;
+}
+
+export function buildTestApp(): TestApp {
+  const emailSender = new RecordingEmailSender();
+  const app = createApp({ jwtSecret: "test-secret", emailSender });
+  return { app, emailSender };
 }
 
 export async function registerUser(
-  app: Express,
+  testApp: TestApp,
   overrides: Partial<{ name: string; email: string; password: string }> = {}
 ): Promise<{ token: string; id: string; email: string }> {
+  const { app, emailSender } = testApp;
   const payload = {
     name: overrides.name ?? "Test User",
     email: overrides.email ?? `user-${Math.random().toString(36).slice(2)}@example.com`,
     password: overrides.password ?? "password123",
   };
 
-  const res = await request(app).post("/api/auth/register").send(payload);
-  return { token: res.body.token, id: res.body.user.id, email: res.body.user.email };
+  await request(app).post("/api/auth/register").send(payload);
+
+  const code = emailSender.extractLastOtpCode(payload.email);
+  if (!code) {
+    throw new Error(`No OTP code was sent to ${payload.email}`);
+  }
+
+  const verifyRes = await request(app)
+    .post("/api/auth/verify-otp")
+    .send({ email: payload.email, code });
+
+  return { token: verifyRes.body.token, id: verifyRes.body.user.id, email: verifyRes.body.user.email };
 }
 
 export async function createProject(

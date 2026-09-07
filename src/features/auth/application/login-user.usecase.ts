@@ -1,4 +1,5 @@
 import { UnauthorizedError } from "../../../shared/domain/errors/app-error";
+import { EmailNotVerifiedError } from "../domain/auth-errors";
 import { UserRepository } from "../domain/user.repository";
 import { PasswordHasher } from "./ports/password-hasher";
 import { TokenService } from "./ports/token-service";
@@ -30,6 +31,10 @@ export class LoginUserUseCase {
     const passwordMatches = await this.passwordHasher.compare(input.password, user.passwordHash);
     if (!passwordMatches) {
       throw new UnauthorizedError("Invalid email or password");
+    }
+
+    if (!user.isVerified) {
+      throw new EmailNotVerifiedError(user.email);
     }
 
     const token = this.tokenService.sign({ userId: user.id, email: user.email });

@@ -4,77 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Todo Clean</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/layout.css" />
+  <link rel="stylesheet" href="/styles/board.css" />
+  <script>
+    // Applied before first paint to avoid a light-mode flash for users who chose dark mode.
+    (function () {
+      var stored = localStorage.getItem("todo-clean.theme");
+      if (stored === "dark" || stored === "light") {
+        document.documentElement.setAttribute("data-theme", stored);
+      }
+    })();
+  </script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">Todo Clean</div>
-    <div id="userBox" class="user-box hidden">
-      <span id="userName"></span>
-      <button id="logoutBtn" class="btn btn-ghost">Log out</button>
-    </div>
-  </header>
-
-  <main id="app" class="app"></main>
-
-  <template id="tpl-auth">
-    <div class="auth-card">
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="login">Log in</button>
-        <button class="tab-btn" data-tab="register">Register</button>
-      </div>
-
-      <form id="loginForm" class="form">
-        <label>Email <input type="email" name="email" required /></label>
-        <label>Password <input type="password" name="password" required /></label>
-        <p class="error" data-error="login"></p>
-        <button type="submit" class="btn btn-primary">Log in</button>
-      </form>
-
-      <form id="registerForm" class="form hidden">
-        <label>Name <input type="text" name="name" required /></label>
-        <label>Email <input type="email" name="email" required /></label>
-        <label>Password <input type="password" name="password" required minlength="8" /></label>
-        <p class="error" data-error="register"></p>
-        <button type="submit" class="btn btn-primary">Create account</button>
-      </form>
-    </div>
-  </template>
-
-  <template id="tpl-projects">
-    <div class="projects-page">
-      <form id="newProjectForm" class="inline-form">
-        <input type="text" name="name" placeholder="New project name" required />
-        <input type="text" name="description" placeholder="Description (optional)" />
-        <button type="submit" class="btn btn-primary">Create project</button>
-      </form>
-      <div id="projectList" class="project-grid"></div>
-    </div>
-  </template>
-
-  <template id="tpl-project-detail">
-    <div class="project-detail">
-      <button id="backBtn" class="btn btn-ghost">&larr; All projects</button>
-      <div class="project-header">
-        <h2 id="projectName"></h2>
-        <p id="projectDescription" class="muted"></p>
-      </div>
-
-      <div class="view-toggle">
-        <button class="tab-btn active" data-view="kanban">Kanban</button>
-        <button class="tab-btn" data-view="list">List</button>
-        <button class="tab-btn" data-view="members">Members</button>
-      </div>
-
-      <form id="newTaskForm" class="inline-form">
-        <input type="text" name="title" placeholder="New task title" required />
-        <button type="submit" class="btn btn-primary">Add task</button>
-      </form>
-
-      <div id="viewContainer"></div>
-    </div>
-  </template>
-
-  <script src="/app.js"></script>
+  <script type="module" src="/js/app/main.js"></script>
 </body>
 </html>

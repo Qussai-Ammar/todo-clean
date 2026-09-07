@@ -12,8 +12,9 @@ async function createTask(app: Express, token: string, projectId: string, title:
 
 describe("tasks feature", () => {
   it("creates a task under a project in the todo column at position 0", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
     const project = await createProject(app, owner.token);
 
     const res = await createTask(app, owner.token, project.id, "First task");
@@ -24,8 +25,9 @@ describe("tasks feature", () => {
   });
 
   it("lists tasks scoped to a single project", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
     const projectA = await createProject(app, owner.token, { name: "A" });
     const projectB = await createProject(app, owner.token, { name: "B" });
     await createTask(app, owner.token, projectA.id, "Task A1");
@@ -41,8 +43,9 @@ describe("tasks feature", () => {
   });
 
   it("moves a task to a new status column", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
     const project = await createProject(app, owner.token);
     const task = (await createTask(app, owner.token, project.id, "Move me")).body;
 
@@ -56,9 +59,10 @@ describe("tasks feature", () => {
   });
 
   it("rejects task creation from a user with no project access", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const stranger = await registerUser(app);
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
+    const stranger = await registerUser(testApp);
     const project = await createProject(app, owner.token);
 
     const res = await createTask(app, stranger.token, project.id, "Should fail");
@@ -66,8 +70,9 @@ describe("tasks feature", () => {
   });
 
   it("deletes a task", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
     const project = await createProject(app, owner.token);
     const task = (await createTask(app, owner.token, project.id, "Delete me")).body;
 

@@ -12,8 +12,9 @@ async function createTask(app: Express, token: string, projectId: string, title:
 
 describe("views feature", () => {
   it("returns a flat, status-ordered list view", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
     const project = await createProject(app, owner.token);
     const taskA = (await createTask(app, owner.token, project.id, "A")).body;
     await createTask(app, owner.token, project.id, "B");
@@ -31,8 +32,9 @@ describe("views feature", () => {
   });
 
   it("returns a kanban view grouped by column", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
     const project = await createProject(app, owner.token);
     await createTask(app, owner.token, project.id, "Todo task");
 
@@ -46,9 +48,10 @@ describe("views feature", () => {
   });
 
   it("denies views to users without project access", async () => {
-    const app = buildTestApp();
-    const owner = await registerUser(app);
-    const stranger = await registerUser(app);
+    const testApp = buildTestApp();
+    const app = testApp.app;
+    const owner = await registerUser(testApp);
+    const stranger = await registerUser(testApp);
     const project = await createProject(app, owner.token);
 
     const res = await request(app)

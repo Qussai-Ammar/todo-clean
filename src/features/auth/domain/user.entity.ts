@@ -5,11 +5,12 @@ export interface UserProps {
   name: string;
   email: string;
   passwordHash: string;
+  isVerified: boolean;
   createdAt: Date;
 }
 
 export class User {
-  private constructor(private readonly props: UserProps) {}
+  private constructor(private props: UserProps) {}
 
   static create(props: UserProps): User {
     return new User(props);
@@ -31,11 +32,25 @@ export class User {
     return this.props.passwordHash;
   }
 
+  get isVerified(): boolean {
+    return this.props.isVerified;
+  }
+
   get createdAt(): Date {
     return this.props.createdAt;
   }
 
-  toPublic(): { id: EntityId; name: string; email: string; createdAt: Date } {
-    return { id: this.props.id, name: this.props.name, email: this.props.email, createdAt: this.props.createdAt };
+  markVerified(): void {
+    this.props.isVerified = true;
+  }
+
+  toPublic(): { id: EntityId; name: string; email: string; isVerified: boolean; createdAt: Date } {
+    return {
+      id: this.props.id,
+      name: this.props.name,
+      email: this.props.email,
+      isVerified: this.props.isVerified,
+      createdAt: this.props.createdAt,
+    };
   }
 }

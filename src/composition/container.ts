@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createAuthModule } from "../features/auth";
+import { AuthModuleConfig, createAuthModule } from "../features/auth";
 import { createCollaborationModule, createMembershipRepository } from "../features/collaboration";
 import { createProjectRepository, createProjectsModule } from "../features/projects";
 import { createTaskRepository, createTasksModule } from "../features/tasks";
@@ -15,10 +15,10 @@ export interface AppRoutes {
   collaboration: Router;
 }
 
-export function buildContainer(jwtSecret: string): AppRoutes {
+export function buildContainer(authConfig: AuthModuleConfig): AppRoutes {
   // Each feature owns and instantiates its own repositories; the
   // composition root only wires the cross-feature ports together.
-  const auth = createAuthModule(jwtSecret);
+  const auth = createAuthModule(authConfig);
   const requireAuth = createAuthMiddleware((token) => auth.tokenService.verify(token));
 
   const projectRepository = createProjectRepository();
